@@ -39,3 +39,14 @@
 
 # debug information files
 *.dwo
+
+# CMake
+build/
+cmake-build-*/
+
+# Node
+node_modules/
+dist/
+
+# IDE
+.idea/
