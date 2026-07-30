@@ -1,6 +1,0 @@
-#include "sandbox/Sandbox.h"
-#include "sandbox/isolation/NamespaceHandler.h"
-#include "sandbox/isolation/CapabilityDropper.h"
-#include "sandbox/isolation/FileSystem.h"
-#include "sandbox/isolation/SeccompProfile.h"
-#include "sandbox/resources/ResourceManager.h"
