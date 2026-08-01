@@ -9,6 +9,7 @@ members = [
 # Dependencies get declared here once, then each crate opts in with
 # `foo.workspace = true`. Keeps versions from drifting between crates.
 [workspace.dependencies]
+serde = { version = "1.0.229", features = ["derive"] }
 
 [workspace.package]
 edition = "2024"

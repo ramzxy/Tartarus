@@ -1,63 +1,40 @@
-//! Tartarus event protocol.
-//!
-//! The contract between the guest agent and the host orchestrator. This is the
-//! ONLY thing both sides agree on. Everything else is an implementation detail
-//! on one side or the other.
-//!
-//! ============================================================================
-//! ASSIGNMENT 1 — write this crate. No dependencies. No I/O. Types only.
-//! ============================================================================
-//!
-//! Define three events: a Process executing, a file being accessed, and a
-//! network connection being made. Then define one type that represents
-//! "any event", so the orchestrator can hold a stream of them.
-//!
-//! Constraints (these ARE the exercise — do not route around them):
-//!
-//!   1. No `String` fields until you can tell me why `&str` does not work here.
-//!   2. Every event carries a timestamp and the PID that caused it. Decide
-//!      whether that lives on each event or somewhere else, and defend it.
-//!   3. An IPv4 and an IPv6 connection must not be representable as the same
-//!      thing by accident. Make the type system stop it.
-//!   4. `cargo clippy` clean. Warnings are errors here.
-//!
-//!
-//!
 use std::net::SocketAddr;
 
-#[derive(Debug)]
+use serde::{Deserialize, Serialize};
+
+#[derive(Debug, Serialize, Deserialize, PartialEq)]
 pub struct Process {
     pub command_line: String,
     pub executable_path: String,
     pub parent_pid: Option<u32>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize, PartialEq)]
 pub enum AccessType {
     Read,
     Write,
     Delete,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize, PartialEq)]
 pub struct FileAccess {
     pub file_path: String,
     pub access_type: AccessType,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize, PartialEq)]
 pub enum Protocol {
     Tcp,
     Udp,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize, PartialEq)]
 pub enum Direction {
     Incoming,
     Outgoing,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize, PartialEq)]
 pub struct NetworkConnection {
     pub protocol: Protocol,
     pub direction: Direction,
@@ -65,18 +42,40 @@ pub struct NetworkConnection {
     pub remote: SocketAddr,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize, PartialEq)]
 pub enum RawEvent {
     Process(Process),
     FileAccess(FileAccess),
     NetworkConnection(NetworkConnection),
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize, PartialEq)]
 pub struct Event {
     pub pid: u32,
-    /// nano seceends. 
+    /// nano seceends.
     /// monotonic, later synced with the host
     pub timestamp: u64,
     pub raw_event: RawEvent,
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn json_round_trip() {
+        let original = Event {
+            pid: 123,
+            timestamp: 456,
+            raw_event: RawEvent::Process(Process {
+                command_line: "ls -la".to_string(),
+                executable_path: "/bin/ls".to_string(),
+                parent_pid: Some(1),
+            }),
+        };
+        let json = serde_json::to_string(&original).unwrap();
+        let back = serde_json::from_str::<Event>(&json).unwrap();
+        println!("back: {:?}", back);
+        assert_eq!(original, back);
+    }
 }
