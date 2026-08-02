@@ -10,6 +10,7 @@ pub struct Process {
 }
 
 #[derive(Debug, Serialize, Deserialize, PartialEq)]
+#[serde(rename_all = "snake_case")]
 pub enum AccessType {
     Read,
     Write,
@@ -23,12 +24,14 @@ pub struct FileAccess {
 }
 
 #[derive(Debug, Serialize, Deserialize, PartialEq)]
+#[serde(rename_all = "snake_case")]
 pub enum Protocol {
     Tcp,
     Udp,
 }
 
 #[derive(Debug, Serialize, Deserialize, PartialEq)]
+#[serde(rename_all = "snake_case")]
 pub enum Direction {
     Incoming,
     Outgoing,
@@ -43,6 +46,7 @@ pub struct NetworkConnection {
 }
 
 #[derive(Debug, Serialize, Deserialize, PartialEq)]
+#[serde(rename_all = "snake_case")]
 pub enum RawEvent {
     Process(Process),
     FileAccess(FileAccess),
@@ -52,8 +56,7 @@ pub enum RawEvent {
 #[derive(Debug, Serialize, Deserialize, PartialEq)]
 pub struct Event {
     pub pid: u32,
-    /// nano seceends.
-    /// monotonic, later synced with the host
+    /// Nanoseconds since guest boot, monotonic. Ordering only, not a date.
     pub timestamp: u64,
     pub raw_event: RawEvent,
 }
@@ -75,7 +78,6 @@ mod tests {
         };
         let json = serde_json::to_string(&original).unwrap();
         let back = serde_json::from_str::<Event>(&json).unwrap();
-        println!("back: {:?}", back);
         assert_eq!(original, back);
     }
 }
