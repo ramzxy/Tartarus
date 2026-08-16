@@ -1,3 +1,5 @@
+mod vm;
+
 use std::{
     io::{BufRead, BufReader},
     os::unix::net::{UnixListener, UnixStream},

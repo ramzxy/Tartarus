@@ -1,0 +1,17 @@
+#cloud-config
+hostname: tartarus-guest
+
+users:
+  - name: ilia
+    groups: [sudo]
+    shell: /bin/bash
+    sudo: "ALL=(ALL) NOPASSWD:ALL"
+    lock_passwd: false
+    plain_text_passwd: "tartarus"
+
+ssh_pwauth: true
+
+runcmd:
+  - systemctl enable --now serial-getty@ttyS0.service
+
+final_message: "tartarus has been sealed. $UPTIME seconds"

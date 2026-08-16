@@ -55,3 +55,7 @@ dist/
 target/
 
 .claude/
+
+vm/**/*.qcow2
+vm/**/*.img
+vm/**/*.iso
